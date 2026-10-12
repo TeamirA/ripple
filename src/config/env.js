@@ -31,7 +31,9 @@ const envSchema = z.object({
 function loadEnv() {
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
-    const issues = result.error.issues.map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`);
+    const issues = result.error.issues.map(
+      (issue) => `  - ${issue.path.join('.')}: ${issue.message}`,
+    );
     throw new Error(`Invalid environment configuration:\n${issues.join('\n')}`);
   }
   return Object.freeze({

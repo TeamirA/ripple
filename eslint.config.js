@@ -23,6 +23,10 @@ export default [
     languageOptions: { globals: { ...globals.browser } },
   },
   {
+    files: ['prisma/**/*.js', 'scripts/**/*.js'],
+    rules: { 'no-console': 'off' },
+  },
+  {
     files: ['tests/**/*.js'],
     languageOptions: { globals: { ...globals.node } },
   },

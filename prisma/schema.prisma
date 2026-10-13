@@ -1,0 +1,147 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Neon: pooled URL for the app, direct URL for migrations.
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+enum NotificationType {
+  FOLLOW
+  LIKE // postId set: post like; commentId set: comment like
+  COMMENT
+  REPLY
+}
+
+model User {
+  id             String   @id @default(cuid())
+  username       String   @unique @db.VarChar(30) // stored lowercase
+  email          String   @unique @db.VarChar(255) // stored lowercase
+  passwordHash   String
+  displayName    String   @db.VarChar(50)
+  bio            String   @default("") @db.VarChar(160)
+  avatarUrl      String?
+  avatarPublicId String?
+  bannerColor    String   @default("#6366f1") @db.VarChar(7)
+  // Incremented on password change so previously issued tokens stop working.
+  tokenVersion   Int      @default(0)
+  postsCount     Int      @default(0)
+  followersCount Int      @default(0)
+  followingCount Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  posts                  Post[]
+  comments               Comment[]
+  likes                  Like[]
+  commentLikes           CommentLike[]
+  following              Follow[]       @relation("Follower")
+  followers              Follow[]       @relation("Following")
+  notifications          Notification[] @relation("Recipient")
+  triggeredNotifications Notification[] @relation("Actor")
+
+  @@index([followersCount(sort: Desc), id])
+}
+
+model Post {
+  id            String    @id @default(cuid())
+  authorId      String
+  content       String    @db.VarChar(500)
+  imageUrl      String?
+  imagePublicId String?
+  likesCount    Int       @default(0)
+  commentsCount Int       @default(0)
+  editedAt      DateTime?
+  createdAt     DateTime  @default(now())
+
+  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments      Comment[]
+  likes         Like[]
+  notifications Notification[]
+
+  @@index([authorId, createdAt(sort: Desc), id])
+  @@index([createdAt(sort: Desc), id])
+  @@index([createdAt, likesCount(sort: Desc)])
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  postId       String
+  authorId     String
+  // null for top-level comments; replies are only ever one level deep.
+  parentId     String?
+  content      String   @db.VarChar(500)
+  likesCount   Int      @default(0)
+  repliesCount Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  post          Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent        Comment?       @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies       Comment[]      @relation("Replies")
+  likes         CommentLike[]
+  notifications Notification[]
+
+  @@index([postId, parentId, createdAt, id])
+  @@index([parentId, createdAt, id])
+  @@index([authorId])
+}
+
+model Like {
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+  @@index([postId])
+}
+
+model CommentLike {
+  userId    String
+  commentId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@id([userId, commentId])
+  @@index([commentId])
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followingId, createdAt])
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  type        NotificationType
+  recipientId String
+  actorId     String
+  postId      String?
+  commentId   String?
+  isRead      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  recipient User     @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor     User     @relation("Actor", fields: [actorId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, createdAt(sort: Desc), id])
+  @@index([recipientId, isRead])
+}

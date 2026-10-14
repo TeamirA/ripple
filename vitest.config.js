@@ -1,8 +1,5 @@
-import { userInfo } from 'node:os';
 import { defineConfig } from 'vitest/config';
-
-const testDatabaseUrl =
-  process.env.TEST_DATABASE_URL ?? `postgresql://${userInfo().username}@localhost:5432/ripple_test`;
+import { testDatabaseUrl } from './tests/setup/testDatabaseUrl.js';
 
 export default defineConfig({
   test: {

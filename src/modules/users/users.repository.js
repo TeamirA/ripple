@@ -1,5 +1,5 @@
 import { prisma } from '../../config/database.js';
-import { USER_SELF_SELECT } from './users.selects.js';
+import { USER_PROFILE_SELECT, USER_SELF_SELECT } from './users.selects.js';
 
 const CREDENTIALS_SELECT = { id: true, passwordHash: true, tokenVersion: true };
 
@@ -53,5 +53,37 @@ export function updatePasswordHash(id, passwordHash) {
     where: { id },
     data: { passwordHash, tokenVersion: { increment: 1 } },
     select: { tokenVersion: true },
+  });
+}
+
+export function findProfileByUsername(username) {
+  return prisma.user.findUnique({ where: { username }, select: USER_PROFILE_SELECT });
+}
+
+export function findIdByUsername(username) {
+  return prisma.user.findUnique({ where: { username }, select: { id: true } });
+}
+
+export async function isFollowing(followerId, followingId) {
+  const follow = await prisma.follow.findUnique({
+    where: { followerId_followingId: { followerId, followingId } },
+    select: { followerId: true },
+  });
+  return Boolean(follow);
+}
+
+export function updateProfile(id, data) {
+  return prisma.user.update({ where: { id }, data, select: USER_SELF_SELECT });
+}
+
+export function findAvatarPublicId(id) {
+  return prisma.user.findUnique({ where: { id }, select: { avatarPublicId: true } });
+}
+
+export function updateAvatar(id, { avatarUrl, avatarPublicId }) {
+  return prisma.user.update({
+    where: { id },
+    data: { avatarUrl, avatarPublicId },
+    select: USER_SELF_SELECT,
   });
 }

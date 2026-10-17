@@ -7,6 +7,9 @@ const passwordSchema = z
   .min(8, 'Password must be at least 8 characters')
   .max(72, 'Password must be at most 72 characters');
 
+// Usernames that would collide with routes such as /users/me or /users/suggestions.
+const RESERVED_USERNAMES = new Set(['me', 'suggestions', 'admin', 'api', 'settings', 'explore']);
+
 export const usernameSchema = z
   .string()
   .trim()
@@ -14,7 +17,8 @@ export const usernameSchema = z
   .min(3, 'Username must be at least 3 characters')
   .max(30, 'Username must be at most 30 characters')
   .regex(/^[a-z0-9_.]+$/, 'Username may only contain letters, numbers, underscores and dots')
-  .refine((value) => !/^\.|\.$|\.\./.test(value), 'Username cannot start, end or repeat dots');
+  .refine((value) => !/^\.|\.$|\.\./.test(value), 'Username cannot start, end or repeat dots')
+  .refine((value) => !RESERVED_USERNAMES.has(value), 'This username is reserved');
 
 export const displayNameSchema = z
   .string()

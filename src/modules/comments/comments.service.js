@@ -1,5 +1,6 @@
 import { AppError } from '../../utils/AppError.js';
 import { buildPage } from '../../utils/pagination.js';
+import { NotificationType, notify } from '../notifications/notifications.service.js';
 import * as postsRepository from '../posts/posts.repository.js';
 import * as commentsRepository from './comments.repository.js';
 import { toCommentResponse } from './comments.selects.js';
@@ -17,16 +18,26 @@ async function assertPostExists(postId) {
 
 /**
  * Threads are one level deep: replying to a reply attaches to its top-level parent.
- * @returns {Promise<string | null>} the effective parent id
+ * @returns {Promise<{ parentId: string | null, repliedToAuthorId: string | null }>}
  */
-async function resolveParentId(postId, parentId) {
-  if (!parentId) return null;
+async function resolveParent(postId, parentId) {
+  if (!parentId) return { parentId: null, repliedToAuthorId: null };
 
   const parent = await commentsRepository.findCommentContext(parentId);
   if (!parent || parent.postId !== postId) {
     throw AppError.validation([{ field: 'body.parentId', message: 'Parent comment not found' }]);
   }
-  return parent.parentId ?? parent.id;
+  return { parentId: parent.parentId ?? parent.id, repliedToAuthorId: parent.authorId };
+}
+
+async function notifyCommentRecipients({ comment, postAuthorId, repliedToAuthorId }) {
+  const event = { actorId: comment.author.id, postId: comment.postId, commentId: comment.id };
+  if (repliedToAuthorId) {
+    await notify({ ...event, type: NotificationType.REPLY, recipientId: repliedToAuthorId });
+  }
+  if (postAuthorId !== repliedToAuthorId) {
+    await notify({ ...event, type: NotificationType.COMMENT, recipientId: postAuthorId });
+  }
 }
 
 export async function listComments(postId, pagination, viewerId) {
@@ -49,14 +60,19 @@ export async function listReplies(commentId, pagination, viewerId) {
  * @param {{ content: string, parentId?: string }} input
  */
 export async function addComment(postId, authorId, { content, parentId }) {
-  await assertPostExists(postId);
-  const effectiveParentId = await resolveParentId(postId, parentId);
+  const post = await assertPostExists(postId);
+  const parent = await resolveParent(postId, parentId);
 
   const comment = await commentsRepository.createComment({
     postId,
     authorId,
-    parentId: effectiveParentId,
+    parentId: parent.parentId,
     content,
+  });
+  await notifyCommentRecipients({
+    comment,
+    postAuthorId: post.authorId,
+    repliedToAuthorId: parent.repliedToAuthorId,
   });
   return toCommentResponse(comment);
 }

@@ -26,10 +26,10 @@ export function decodeCursor(cursor) {
 }
 
 /**
- * Keyset condition for rows ordered by (createdAt, id) in the given direction.
+ * Keyset condition for rows ordered by (createdAt, <idField>) in the given direction.
  * Strictly "after" the cursor row, so pages never overlap or skip rows.
  */
-export function createdAtCursorWhere(cursor, direction = 'desc') {
+export function createdAtCursorWhere(cursor, direction = 'desc', idField = 'id') {
   const values = decodeCursor(cursor);
   if (!values) return {};
 
@@ -41,13 +41,13 @@ export function createdAtCursorWhere(cursor, direction = 'desc') {
   return {
     OR: [
       { createdAt: { [comparator]: createdAt } },
-      { createdAt, id: { [comparator]: values.id } },
+      { createdAt, [idField]: { [comparator]: values.id } },
     ],
   };
 }
 
-export function createdAtOrderBy(direction = 'desc') {
-  return [{ createdAt: direction }, { id: direction }];
+export function createdAtOrderBy(direction = 'desc', idField = 'id') {
+  return [{ createdAt: direction }, { [idField]: direction }];
 }
 
 /**

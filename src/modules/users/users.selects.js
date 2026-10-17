@@ -21,3 +21,10 @@ export const USER_SELF_SELECT = {
   ...USER_PROFILE_SELECT,
   email: true,
 };
+
+/** Used in follower lists, suggestions and user search results. */
+export const USER_CARD_SELECT = {
+  ...USER_SUMMARY_SELECT,
+  bio: true,
+  followersCount: true,
+};

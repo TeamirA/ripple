@@ -14,7 +14,8 @@ async function resolveTarget(followerId, username) {
   return followingId;
 }
 
-async function withFollowState(users, viewerId) {
+/** Adds `isSelf` / `isFollowing` relative to the viewer to a list of user cards. */
+export async function attachFollowState(users, viewerId) {
   const followedIds = await followsRepository.findFollowedIdSet(
     viewerId,
     users.map((user) => user.id),
@@ -31,7 +32,7 @@ async function toUserListPage(rows, limit, relation, viewerId) {
     createdAt: row.createdAt,
     id: row[relation].id,
   }));
-  const users = await withFollowState(
+  const users = await attachFollowState(
     page.data.map((row) => row[relation]),
     viewerId,
   );
@@ -101,5 +102,5 @@ export async function getSuggestions(viewerId, limit) {
   const users = await followsRepository.findUserCardsByIds(orderedIds);
   const usersById = new Map(users.map((user) => [user.id, user]));
   const ordered = orderedIds.map((id) => usersById.get(id)).filter(Boolean);
-  return withFollowState(ordered, viewerId);
+  return attachFollowState(ordered, viewerId);
 }

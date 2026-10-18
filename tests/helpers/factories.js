@@ -14,7 +14,10 @@ export async function createComment(client, postId, content = 'Nice post', paren
 export async function collectAllPages(client, path, limit = 2) {
   const items = [];
   let cursor = null;
+  let pageCount = 0;
   do {
+    pageCount += 1;
+    if (pageCount > 50) throw new Error(`Pagination did not terminate for ${path}`);
     const separator = path.includes('?') ? '&' : '?';
     const query = `limit=${limit}${cursor ? `&cursor=${cursor}` : ''}`;
     const res = await client.get(`${path}${separator}${query}`);

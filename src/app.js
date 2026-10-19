@@ -8,6 +8,7 @@ import { env } from './config/env.js';
 import { logger } from './config/logger.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFound } from './middlewares/notFound.js';
+import { serveAppShell, serveStaticAssets } from './middlewares/serveClient.js';
 import { apiRouter } from './routes.js';
 
 const contentSecurityPolicy = {
@@ -57,6 +58,9 @@ export function createApp() {
 
   app.use('/api/v1', apiRouter);
   app.use('/api', notFound);
+
+  app.use(serveStaticAssets);
+  app.use(serveAppShell);
 
   app.use(notFound);
   app.use(errorHandler);

@@ -21,6 +21,7 @@ export default [
   {
     files: ['public/**/*.js'],
     languageOptions: { globals: { ...globals.browser } },
+    rules: { 'no-console': ['warn', { allow: ['error'] }] },
   },
   {
     files: ['prisma/**/*.js', 'scripts/**/*.js'],

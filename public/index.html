@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Ripple</title>
+    <meta
+      name="description"
+      content="Ripple is a small, friendly social network: share short posts, follow people and join the conversation."
+    />
+    <meta name="theme-color" content="#5b5bd6" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+
+    <!-- Applies the saved theme before first paint to avoid a light/dark flash. -->
+    <script src="/js/theme-init.js"></script>
+
+    <link rel="stylesheet" href="/css/variables.css" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/layout.css" />
+    <link rel="stylesheet" href="/css/components/button.css" />
+    <link rel="stylesheet" href="/css/components/form.css" />
+    <link rel="stylesheet" href="/css/components/avatar.css" />
+    <link rel="stylesheet" href="/css/components/nav.css" />
+    <link rel="stylesheet" href="/css/components/toast.css" />
+    <link rel="stylesheet" href="/css/components/auth.css" />
+    <link rel="stylesheet" href="/css/components/status-page.css" />
+
+    <link rel="modulepreload" href="/js/main.js" />
+    <script type="module" src="/js/main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="app-shell" id="app-shell">
+      <header class="app-header" id="app-header"></header>
+      <nav class="app-nav" id="app-nav" aria-label="Primary"></nav>
+      <main class="app-main" id="main" tabindex="-1">
+        <div class="boot-screen" aria-busy="true">
+          <span class="boot-screen__logo" aria-hidden="true"></span>
+          <span class="visually-hidden">Loading Ripple…</span>
+        </div>
+      </main>
+      <aside class="app-aside" id="app-aside" aria-label="Discover"></aside>
+    </div>
+
+    <div class="toast-region" id="toast-region" role="status" aria-live="polite"></div>
+
+    <noscript>
+      <p class="noscript">Ripple needs JavaScript enabled to run.</p>
+    </noscript>
+  </body>
+</html>

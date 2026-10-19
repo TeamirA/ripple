@@ -1,0 +1,136 @@
+/* Mobile first: header on top, content, bottom tab bar. */
+
+.app-shell {
+  min-height: 100dvh;
+  padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: var(--header-height);
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+}
+
+.app-main {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  min-height: calc(100dvh - var(--header-height) - var(--bottom-nav-height));
+}
+
+.app-main:focus {
+  outline: none;
+}
+
+.app-aside {
+  display: none;
+}
+
+.page {
+  padding-bottom: var(--space-7);
+}
+
+.page-header {
+  position: sticky;
+  top: var(--header-height);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 3.25rem;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.page-header__title {
+  font-size: var(--font-size-lg);
+}
+
+.boot-screen {
+  display: grid;
+  place-items: center;
+  min-height: 60dvh;
+}
+
+.boot-screen__logo {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-lg);
+  background: url('/assets/favicon.svg') center / cover;
+  animation: pulse 1.2s var(--easing-standard) infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+}
+
+/* Tablet: icon rail on the left, header and bottom bar go away. */
+@media (min-width: 700px) {
+  .app-shell {
+    display: grid;
+    grid-template-columns: var(--nav-width-compact) minmax(0, var(--content-width));
+    justify-content: center;
+    padding-bottom: 0;
+  }
+
+  .app-header {
+    display: none;
+  }
+
+  .app-main {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 100dvh;
+    border-inline: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
+  .page-header {
+    top: 0;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  }
+}
+
+/* Desktop: discovery sidebar on the right. */
+@media (min-width: 1100px) {
+  .app-shell {
+    grid-template-columns:
+      var(--nav-width-compact) minmax(0, var(--content-width))
+      var(--aside-width);
+  }
+
+  .app-aside {
+    display: block;
+    grid-column: 3;
+    grid-row: 1;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 100dvh;
+    overflow-y: auto;
+    padding: var(--space-4) var(--space-5);
+  }
+}
+
+/* Wide: the nav rail shows labels. */
+@media (min-width: 1280px) {
+  .app-shell {
+    grid-template-columns:
+      var(--nav-width-wide) minmax(0, var(--content-width))
+      var(--aside-width);
+  }
+}

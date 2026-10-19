@@ -1,0 +1,35 @@
+.status-page {
+  display: grid;
+  place-items: center;
+  gap: var(--space-4);
+  min-height: 70dvh;
+  padding: var(--space-7) var(--space-4);
+  text-align: center;
+}
+
+.status-page__code {
+  font-size: clamp(4rem, 18vw, 7rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-like));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.status-page__title {
+  font-size: var(--font-size-xl);
+}
+
+.status-page__message {
+  max-width: 28rem;
+  color: var(--color-text-muted);
+}
+
+.status-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}

@@ -1,0 +1,236 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.brand:hover {
+  text-decoration: none;
+}
+
+.brand__mark {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  background: url('/assets/favicon.svg') center / cover;
+}
+
+/* Mobile: fixed bottom tab bar. */
+.app-nav {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: var(--z-nav);
+  height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.nav__brand,
+.nav__account,
+.nav__label,
+.nav__compose {
+  display: none;
+}
+
+.nav__list {
+  display: flex;
+  justify-content: space-around;
+  height: 100%;
+  padding: 0;
+  list-style: none;
+}
+
+.nav__link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 0 var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.nav__link:hover {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.nav__link[aria-current='page'] {
+  color: var(--color-primary);
+}
+
+.nav__link .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.3rem;
+  border-radius: var(--radius-full);
+  background: var(--color-like);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.125rem;
+  text-align: center;
+}
+
+.badge:empty {
+  display: none;
+}
+
+/* Tablet and up: sticky vertical rail. */
+@media (min-width: 700px) {
+  .app-nav {
+    position: sticky;
+    inset: 0 auto auto;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    height: 100dvh;
+    padding: var(--space-4) var(--space-2);
+    border-top: 0;
+    background: transparent;
+  }
+
+  .nav__brand {
+    display: grid;
+    place-items: center;
+    margin-bottom: var(--space-4);
+  }
+
+  .nav__list {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-1);
+    height: auto;
+  }
+
+  .nav__link {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    height: 3rem;
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-full);
+  }
+
+  .nav__link:hover {
+    background: var(--color-surface-hover);
+  }
+
+  .nav__link[aria-current='page'] {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .badge {
+    top: 0.375rem;
+    right: 0.375rem;
+  }
+
+  .nav__compose {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin: var(--space-3) auto 0;
+    padding: 0;
+  }
+
+  .nav__account {
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-nav {
+    padding-inline: var(--space-4);
+  }
+
+  .nav__brand {
+    justify-content: start;
+    padding-left: var(--space-3);
+  }
+
+  .nav__link {
+    justify-content: flex-start;
+  }
+
+  .nav__label {
+    display: inline;
+    font-size: var(--font-size-lg);
+  }
+
+  .badge {
+    position: static;
+    margin-left: auto;
+  }
+
+  .nav__compose {
+    width: 100%;
+  }
+
+  .nav__compose .nav__label {
+    font-size: var(--font-size-md);
+  }
+
+  .nav__compose .icon {
+    display: none;
+  }
+
+  .nav__account {
+    justify-content: flex-start;
+  }
+}
+
+.account-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  text-align: left;
+}
+
+.account-chip:hover {
+  background: var(--color-surface-hover);
+}
+
+.account-chip__text {
+  display: none;
+  min-width: 0;
+}
+
+@media (min-width: 1280px) {
+  .account-chip__text {
+    display: grid;
+  }
+}
+
+.account-chip__name {
+  overflow: hidden;
+  font-weight: var(--font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-chip__handle {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

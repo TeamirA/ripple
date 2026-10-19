@@ -1,0 +1,68 @@
+.auth-page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100dvh - var(--header-height) - var(--bottom-nav-height));
+  padding: var(--space-6) var(--space-4);
+}
+
+.auth-card {
+  display: grid;
+  gap: var(--space-5);
+  width: min(100%, 24rem);
+}
+
+.auth-card__header {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.auth-card__mark {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-lg);
+  background: url('/assets/favicon.svg') center / cover;
+  box-shadow: var(--shadow-md);
+}
+
+.auth-card__title {
+  font-size: var(--font-size-2xl);
+  letter-spacing: -0.02em;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.auth-card__switch {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.demo-hint {
+  font-size: var(--font-size-xs);
+  text-align: center;
+  color: var(--color-text-subtle);
+}
+
+@media (min-width: 700px) {
+  .auth-page {
+    min-height: 100dvh;
+  }
+}

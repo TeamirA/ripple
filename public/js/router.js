@@ -2,6 +2,11 @@ import { isSignedIn } from './state/session.js';
 
 const APP_NAME = 'Ripple';
 
+/** True when the previous history entry belongs to this app, so "back" stays in Ripple. */
+export function canGoBack() {
+  return (window.history.state?.depth ?? 0) > 0;
+}
+
 function compilePattern(path) {
   const keys = [];
   const source = path.replace(/:(\w+)/g, (_, key) => {
@@ -41,7 +46,7 @@ export function createRouter({ routes, outlet, notFoundPage, errorPage, onRouteC
 
   function resolveRedirect(route, url) {
     if (route.requiresAuth && !isSignedIn()) {
-      return `/login?next=${encodeURIComponent(url.pathname + url.search)}`;
+      return route.guestRedirect ?? `/login?next=${encodeURIComponent(url.pathname + url.search)}`;
     }
     if (route.guestOnly && isSignedIn()) {
       const next = url.searchParams.get('next');
@@ -56,6 +61,12 @@ export function createRouter({ routes, outlet, notFoundPage, errorPage, onRouteC
     const target = heading ?? outlet;
     if (heading) heading.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
+  }
+
+  function restoreScroll(url, isPopState) {
+    const anchor = url.hash && document.getElementById(url.hash.slice(1));
+    if (anchor && !isPopState) return anchor.scrollIntoView();
+    window.scrollTo(0, isPopState ? (scrollPositions.get(history.state?.key) ?? 0) : 0);
   }
 
   async function renderPage(pageModule, context) {
@@ -100,13 +111,14 @@ export function createRouter({ routes, outlet, notFoundPage, errorPage, onRouteC
     const title = outlet.querySelector('[data-page-title]')?.dataset.pageTitle;
     document.title = title ? `${title} · ${APP_NAME}` : APP_NAME;
 
-    window.scrollTo(0, isPopState ? (scrollPositions.get(history.state?.key) ?? 0) : 0);
+    restoreScroll(url, isPopState);
     if (!isPopState) focusPage();
   }
 
   function navigate(path, { replace = false } = {}) {
     scrollPositions.set(history.state?.key, window.scrollY);
-    const state = { key: crypto.randomUUID() };
+    const depth = history.state?.depth ?? 0;
+    const state = { key: crypto.randomUUID(), depth: replace ? depth : depth + 1 };
     if (replace) history.replaceState(state, '', path);
     else history.pushState(state, '', path);
     return handleLocation();
@@ -128,7 +140,7 @@ export function createRouter({ routes, outlet, notFoundPage, errorPage, onRouteC
     navigate,
     refresh: () => handleLocation(),
     start() {
-      if (!history.state?.key) history.replaceState({ key: crypto.randomUUID() }, '');
+      if (!history.state?.key) history.replaceState({ key: crypto.randomUUID(), depth: 0 }, '');
       history.scrollRestoration = 'manual';
       document.addEventListener('click', handleLinkClick);
       window.addEventListener('popstate', () => handleLocation({ isPopState: true }));

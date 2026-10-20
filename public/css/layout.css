@@ -134,3 +134,18 @@
       var(--aside-width);
   }
 }
+
+.page-header__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-header__subtitle {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.page-header__actions {
+  display: flex;
+  gap: var(--space-2);
+}

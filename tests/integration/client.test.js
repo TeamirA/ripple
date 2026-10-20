@@ -15,12 +15,14 @@ describe('client app shell', () => {
     },
   );
 
-  it('serves static assets with cache headers', async () => {
-    const res = await request(app).get('/js/main.js');
+  it('serves static assets with validators so unchanged files return 304', async () => {
+    const first = await request(app).get('/js/main.js');
+    const second = await request(app).get('/js/main.js').set('If-None-Match', first.headers.etag);
 
-    expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toMatch(/javascript/);
-    expect(res.headers['cache-control']).toMatch(/max-age=\d+/);
+    expect(first.status).toBe(200);
+    expect(first.headers['content-type']).toMatch(/javascript/);
+    expect(first.headers.etag).toBeDefined();
+    expect(second.status).toBe(304);
   });
 
   it('returns 404 for missing assets instead of the app shell', async () => {

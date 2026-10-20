@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { env } from '../config/env.js';
 
 const PUBLIC_DIR = fileURLToPath(new URL('../../public', import.meta.url));
 const INDEX_FILE = path.join(PUBLIC_DIR, 'index.html');
@@ -8,10 +9,11 @@ const INDEX_FILE = path.join(PUBLIC_DIR, 'index.html');
 const ONE_HOUR = 60 * 60;
 const ONE_WEEK = 7 * 24 * ONE_HOUR;
 
-// Scripts and styles are not fingerprinted, so they get a short cache with background
-// revalidation; images and fonts rarely change and can be cached for longer.
+// Scripts and styles are not fingerprinted, so in production they get a short cache with
+// background revalidation; images and fonts rarely change and can be cached for longer.
+// In development every asset revalidates so edits show up on reload.
 function setStaticCacheHeaders(res, filePath) {
-  if (filePath.endsWith('.html')) {
+  if (!env.isProduction || filePath.endsWith('.html')) {
     res.setHeader('Cache-Control', 'no-cache');
   } else if (/\.(js|css)$/.test(filePath)) {
     res.setHeader(

@@ -14,7 +14,8 @@ import { apiRouter } from './routes.js';
 const contentSecurityPolicy = {
   directives: {
     defaultSrc: ["'self'"],
-    imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
+    // blob: lets the composer preview a selected image before it is uploaded.
+    imgSrc: ["'self'", 'data:', 'blob:', 'https://res.cloudinary.com'],
     scriptSrc: ["'self'"],
     styleSrc: ["'self'"],
     connectSrc: ["'self'"],

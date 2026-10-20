@@ -1,0 +1,45 @@
+.menu {
+  position: relative;
+}
+
+.menu__trigger {
+  list-style: none;
+}
+
+.menu__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.menu__list {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: var(--z-dropdown);
+  display: grid;
+  min-width: 10rem;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--font-size-sm);
+  text-align: left;
+}
+
+.menu__item:hover {
+  background: var(--color-surface-hover);
+}
+
+.menu__item--danger {
+  color: var(--color-danger);
+}

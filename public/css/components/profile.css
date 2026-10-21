@@ -1,0 +1,91 @@
+.profile {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile__banner {
+  height: clamp(7rem, 24vw, 12rem);
+  background:
+    radial-gradient(circle at 80% 20%, rgb(255 255 255 / 0.22), transparent 45%),
+    linear-gradient(
+      135deg,
+      var(--banner-color, var(--color-primary)),
+      color-mix(in srgb, var(--banner-color, var(--color-primary)) 55%, #000)
+    );
+}
+
+.profile__top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+}
+
+.profile__avatar {
+  margin-top: calc(var(--space-7) * -1);
+}
+
+.profile__actions {
+  padding-top: var(--space-3);
+}
+
+.profile__info {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.profile__name {
+  font-size: var(--font-size-xl);
+}
+
+.profile__handle,
+.profile__meta {
+  color: var(--color-text-muted);
+}
+
+.profile__handle {
+  margin-top: calc(var(--space-2) * -1);
+}
+
+.profile__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+}
+
+.profile__meta .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.profile__stats {
+  display: flex;
+  gap: var(--space-5);
+  font-size: var(--font-size-sm);
+}
+
+.profile__stat {
+  color: var(--color-text-muted);
+}
+
+.profile__stat strong {
+  color: var(--color-text);
+}
+
+.avatar-editor {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.avatar-editor__upload:focus-within {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

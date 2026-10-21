@@ -1,0 +1,106 @@
+.comments {
+  border-top: 1px solid var(--color-border);
+}
+
+.comments__heading {
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  font-size: var(--font-size-md);
+}
+
+.comment-form {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.comment-form__input {
+  min-height: 2.5rem;
+  padding: var(--space-2) var(--space-3);
+}
+
+.comment-form__actions {
+  grid-column: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.comment-thread {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-2) 0;
+}
+
+.comment {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+}
+
+.comment-thread__replies {
+  margin-left: calc(var(--space-4) + 1rem);
+  border-left: 2px solid var(--color-border);
+}
+
+.comment-thread__replies .comment {
+  padding-left: var(--space-4);
+}
+
+.comment__body {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.comment__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.comment__author {
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.comment__meta {
+  color: var(--color-text-muted);
+}
+
+.comment__content {
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+.comment__actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: calc(var(--space-2) * -1);
+}
+
+.comment__actions .action-button {
+  height: 2rem;
+  font-size: var(--font-size-xs);
+}
+
+.action-button--danger:hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.comment-thread__more {
+  margin: 0 0 var(--space-2) calc(var(--space-4) + 3rem);
+  padding: var(--space-1) 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.comment-thread__more:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,23 @@
+.settings {
+  display: grid;
+}
+
+.settings-section {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.settings-section__title {
+  font-size: var(--font-size-lg);
+}
+
+.settings-section__hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.settings-section .form {
+  max-width: 24rem;
+}

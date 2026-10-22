@@ -2,7 +2,6 @@ import { commentsApi } from '../api/commentsApi.js';
 import { getCurrentUser } from '../state/session.js';
 import { html } from '../utils/escapeHtml.js';
 import { createElement, delegate, insertHtml } from '../utils/dom.js';
-import { formatDateTime, formatRelativeTime } from '../utils/formatTime.js';
 import { pluralize } from '../utils/pluralize.js';
 import { formatRichText } from '../utils/richText.js';
 import { Avatar } from './Avatar.js';
@@ -11,7 +10,9 @@ import { EmptyState } from './EmptyState.js';
 import { icon } from './icons.js';
 import { createInfiniteList } from './InfiniteList.js';
 import { LikeButton, toggleLike } from './LikeButton.js';
+import { RelativeTime } from './RelativeTime.js';
 import { confirmDialog } from './Modal.js';
+import { createSkeletonLoader, PostSkeleton } from './Skeleton.js';
 import { showErrorToast } from './Toast.js';
 
 function Comment(comment, { canModerate }) {
@@ -34,10 +35,7 @@ function Comment(comment, { canModerate }) {
           >${comment.author.displayName}</a
         >
         <span class="comment__meta"
-          >@${comment.author.username} ·
-          <time datetime="${comment.createdAt}" title="${formatDateTime(comment.createdAt)}"
-            >${formatRelativeTime(comment.createdAt)}</time
-          >
+          >@${comment.author.username} · ${RelativeTime(comment.createdAt)}
         </span>
       </header>
       <div class="comment__content">${formatRichText(comment.content)}</div>
@@ -111,6 +109,7 @@ export function mountCommentThread(container, { postId, postAuthorId, onCountCha
     role: 'list',
     fetchPage: (cursor, signal) => commentsApi.list(postId, { cursor }, { signal }),
     renderItem: (comment) => Thread(comment, options),
+    renderLoading: createSkeletonLoader(() => PostSkeleton(2)),
     renderEmpty: () =>
       EmptyState({ icon: 'comment', title: 'No comments yet', message: 'Start the conversation.' }),
   });

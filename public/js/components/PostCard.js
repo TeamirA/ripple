@@ -1,10 +1,11 @@
 import { getCurrentUser } from '../state/session.js';
 import { html } from '../utils/escapeHtml.js';
-import { formatCount, formatDateTime, formatRelativeTime } from '../utils/formatTime.js';
+import { formatCount, formatDateTime } from '../utils/formatTime.js';
 import { formatRichText } from '../utils/richText.js';
 import { Avatar } from './Avatar.js';
 import { icon } from './icons.js';
 import { LikeButton } from './LikeButton.js';
+import { RelativeTime } from './RelativeTime.js';
 
 function OwnerMenu(post) {
   return html`<details class="menu" data-menu>
@@ -66,9 +67,11 @@ export function PostCard(post, { isDetail = false } = {}) {
         </a>
         <span class="post-card__dot" aria-hidden="true">·</span>
         <a class="post-card__time" href="${postUrl}">
-          <time datetime="${post.createdAt}" title="${formatDateTime(post.createdAt)}">
-            ${isDetail ? formatDateTime(post.createdAt) : formatRelativeTime(post.createdAt)}
-          </time>
+          ${
+            isDetail
+              ? html`<time datetime="${post.createdAt}">${formatDateTime(post.createdAt)}</time>`
+              : RelativeTime(post.createdAt)
+          }
         </a>
         <span class="post-card__edited" data-post-edited ${post.editedAt ? '' : html`hidden`}
           >· edited</span

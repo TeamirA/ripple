@@ -21,6 +21,16 @@ function assertImageStorageEnabled() {
   }
 }
 
+/** f_auto/q_auto let the CDN serve AVIF/WebP at a sensible quality per browser. */
+function buildDeliveryUrl({ public_id: publicId, version }) {
+  return cloudinary.url(publicId, {
+    secure: true,
+    version,
+    fetch_format: 'auto',
+    quality: 'auto',
+  });
+}
+
 /**
  * Uploads an in-memory image and returns its public URL and id.
  * @param {Buffer} buffer
@@ -31,10 +41,10 @@ export function uploadImage(buffer, { folder, transformation }) {
   assertImageStorageEnabled();
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, transformation, resource_type: 'image', format: 'webp' },
+      { folder, transformation, resource_type: 'image' },
       (error, result) => {
         if (error) return reject(new AppError(502, 'UPLOAD_FAILED', 'Image upload failed'));
-        resolve({ url: result.secure_url, publicId: result.public_id });
+        resolve({ url: buildDeliveryUrl(result), publicId: result.public_id });
       },
     );
     stream.end(buffer);

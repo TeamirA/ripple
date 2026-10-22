@@ -3,6 +3,7 @@ import { html } from '../utils/escapeHtml.js';
 import { setHtml } from '../utils/dom.js';
 import { Avatar } from './Avatar.js';
 import { icon } from './icons.js';
+import { ThemeToggle } from './ThemeToggle.js';
 
 function getNavItems(user) {
   if (!user) {
@@ -49,6 +50,16 @@ function AccountChip(user) {
   </a>`;
 }
 
+function ComposeLink() {
+  return html`<a
+    class="nav__compose button button--primary button--lg"
+    href="/?compose=1"
+    aria-label="New post"
+  >
+    ${icon('plus')}<span class="nav__label">Post</span>
+  </a>`;
+}
+
 function renderNav(container, { currentUser, unreadCount }) {
   setHtml(
     container,
@@ -59,36 +70,21 @@ function renderNav(container, { currentUser, unreadCount }) {
       <ul class="nav__list">
         ${getNavItems(currentUser).map((item) => NavLink(item, unreadCount))}
       </ul>
-      ${
-        currentUser
-          ? html`<a
-                class="nav__compose button button--primary button--lg"
-                href="/?compose=1"
-                aria-label="New post"
-              >
-                ${icon('plus')}<span class="nav__label">Post</span>
-              </a>
-              <div class="nav__account">${AccountChip(currentUser)}</div>`
-          : ''
-      }
+      ${currentUser ? ComposeLink() : ''}
+      <div class="nav__footer">${ThemeToggle()} ${currentUser ? AccountChip(currentUser) : ''}</div>
     `,
   );
 }
 
 function renderHeader(container, { currentUser }) {
+  const loginLink = html`<a href="/login" class="button button--primary button--sm">Log in</a>`;
   setHtml(
     container,
     html`
       <a class="brand" href="${currentUser ? '/' : '/explore'}">
         <span class="brand__mark" aria-hidden="true"></span>Ripple
       </a>
-      ${
-        currentUser
-          ? html`<a href="/settings" class="icon-button" aria-label="Settings"
-              >${icon('settings')}</a
-            >`
-          : html`<a href="/login" class="button button--primary button--sm">Log in</a>`
-      }
+      <div class="app-header__actions">${ThemeToggle()} ${currentUser ? '' : loginLink}</div>
     `,
   );
 }

@@ -31,10 +31,16 @@
 }
 
 .nav__brand,
-.nav__account,
+.nav__footer,
 .nav__label,
 .nav__compose {
   display: none;
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .nav__list {
@@ -148,9 +154,11 @@
     padding: 0;
   }
 
-  .nav__account {
+  .nav__footer {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
     margin-top: auto;
   }
 }
@@ -191,8 +199,12 @@
     display: none;
   }
 
-  .nav__account {
-    justify-content: flex-start;
+  .nav__footer {
+    align-items: stretch;
+  }
+
+  .nav__footer .theme-toggle {
+    margin-left: var(--space-2);
   }
 }
 

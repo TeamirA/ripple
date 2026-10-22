@@ -1,4 +1,5 @@
 import { authApi } from '../api/authApi.js';
+import { AppearanceSection, bindAppearanceSection } from '../components/AppearanceSettings.js';
 import { FormField } from '../components/FormField.js';
 import { PageHeader } from '../components/PageHeader.js';
 import { showToast } from '../components/Toast.js';
@@ -38,10 +39,13 @@ export function render(container) {
     container,
     html`<section class="page">
       ${PageHeader({ title: 'Settings' })}
-      <div class="settings" data-settings>${PasswordSection()} ${AccountSection(user)}</div>
+      <div class="settings" data-settings>
+        ${AppearanceSection()} ${PasswordSection()} ${AccountSection(user)}
+      </div>
     </section>`,
   );
 
+  bindAppearanceSection(container);
   const form = container.querySelector('[data-password-form]');
   form.addEventListener('submit', async (event) => {
     event.preventDefault();

@@ -17,7 +17,7 @@ export function setCurrentUser(user) {
 /** Restores the session from the httpOnly cookie on page load. */
 export async function restoreSession() {
   try {
-    const { user } = await authApi.getCurrentUser();
+    const { user } = await authApi.getSession();
     setCurrentUser(user);
   } catch {
     setCurrentUser(null);

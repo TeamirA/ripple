@@ -22,6 +22,7 @@ authRouter.post(
 );
 authRouter.post('/demo', authRateLimiter, authController.loginDemo);
 authRouter.post('/logout', authController.logout);
+authRouter.get('/session', authController.getSession);
 authRouter.get('/me', requireAuth, authController.getMe);
 authRouter.patch(
   '/password',

@@ -28,6 +28,12 @@ export function logout(_req, res) {
   res.status(204).end();
 }
 
+/** Like /me, but anonymous visitors get `{ user: null }` instead of a 401. */
+export async function getSession(req, res) {
+  const user = req.user ? await authService.getCurrentUser(req.user.id) : null;
+  res.set('Cache-Control', 'no-store').json({ user });
+}
+
 export async function getMe(req, res) {
   const user = await authService.getCurrentUser(req.user.id);
   res.json({ user });

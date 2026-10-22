@@ -106,6 +106,16 @@ describe('session lifecycle', () => {
     expect(res.body.error.code).toBe('UNAUTHORIZED');
   });
 
+  it('reports the session without failing for anonymous visitors', async () => {
+    const anonymous = await request(app).get('/api/v1/auth/session');
+    const client = await createSignedInClient();
+    const signedIn = await client.get('/auth/session');
+
+    expect(anonymous.status).toBe(200);
+    expect(anonymous.body).toEqual({ user: null });
+    expect(signedIn.body.user.id).toBe(client.user.id);
+  });
+
   it('ignores a tampered session cookie', async () => {
     const res = await request(app)
       .get('/api/v1/auth/me')

@@ -1,0 +1,79 @@
+.skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton) 0%,
+    var(--color-skeleton-shine) 50%,
+    var(--color-skeleton) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton--avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.skeleton--line {
+  height: 0.8rem;
+}
+
+.skeleton--pill {
+  width: 5.5rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+}
+
+.skeleton--w25 {
+  width: 25%;
+}
+.skeleton--w40 {
+  width: 40%;
+}
+.skeleton--w60 {
+  width: 60%;
+}
+.skeleton--w70 {
+  width: 70%;
+}
+.skeleton--w80 {
+  width: 80%;
+}
+.skeleton--w88 {
+  width: 88%;
+}
+.skeleton--w95 {
+  width: 95%;
+}
+
+.skeleton-post,
+.skeleton-user {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.skeleton-user {
+  align-items: center;
+}
+
+.skeleton-post__body {
+  display: grid;
+  flex: 1;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

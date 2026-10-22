@@ -4,6 +4,7 @@ import { html } from '../utils/escapeHtml.js';
 import { setHtml } from '../utils/dom.js';
 import { bindFollowButtons } from './FollowButton.js';
 import { icon } from './icons.js';
+import { UserSkeleton } from './Skeleton.js';
 import { UserCard } from './UserCard.js';
 
 // Matches the breakpoint where layout.css shows the aside.
@@ -24,7 +25,7 @@ function AsideSkeleton() {
     </form>
     <section class="aside-card" aria-labelledby="suggestions-heading">
       <h2 class="aside-card__title" id="suggestions-heading">Who to follow</h2>
-      <div data-suggestions><p class="text-muted">Loading suggestions…</p></div>
+      <div data-suggestions>${UserSkeleton(3)}</div>
     </section>
     <footer class="aside-footer">
       <span>Ripple · a portfolio project</span>

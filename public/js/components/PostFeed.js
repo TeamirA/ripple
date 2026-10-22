@@ -2,6 +2,7 @@ import { EmptyState } from './EmptyState.js';
 import { createInfiniteList } from './InfiniteList.js';
 import { PostCard } from './PostCard.js';
 import { bindPostInteractions } from './postInteractions.js';
+import { createSkeletonLoader, PostSkeleton } from './Skeleton.js';
 
 /**
  * An infinite list of PostCards with likes/edit/delete wired up.
@@ -16,6 +17,7 @@ export function mountPostFeed(container, { label, fetchPage, emptyState, navigat
     fetchPage,
     renderItem: (post) => PostCard(post),
     renderEmpty: () => EmptyState(emptyState),
+    renderLoading: createSkeletonLoader(PostSkeleton),
   });
   const unbind = bindPostInteractions(container, {
     navigate,

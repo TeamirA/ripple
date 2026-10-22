@@ -3,6 +3,7 @@ import { EmptyState } from '../components/EmptyState.js';
 import { createInfiniteList } from '../components/InfiniteList.js';
 import { NotificationItem } from '../components/NotificationItem.js';
 import { PageHeader } from '../components/PageHeader.js';
+import { createSkeletonLoader, UserSkeleton } from '../components/Skeleton.js';
 import { showErrorToast } from '../components/Toast.js';
 import { store } from '../state/store.js';
 import { refreshUnreadCount } from '../state/unreadNotifications.js';
@@ -34,6 +35,7 @@ export function render(container) {
     role: 'list',
     fetchPage: (cursor, signal) => notificationsApi.list({ cursor }, { signal }),
     renderItem: NotificationItem,
+    renderLoading: createSkeletonLoader(() => UserSkeleton(6)),
     renderEmpty: () =>
       EmptyState({
         icon: 'bell',

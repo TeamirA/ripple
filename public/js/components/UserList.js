@@ -1,6 +1,7 @@
 import { EmptyState } from './EmptyState.js';
 import { bindFollowButtons } from './FollowButton.js';
 import { createInfiniteList } from './InfiniteList.js';
+import { createSkeletonLoader, UserSkeleton } from './Skeleton.js';
 import { UserCard } from './UserCard.js';
 
 /**
@@ -15,6 +16,7 @@ export function mountUserList(container, { label, fetchPage, emptyState }) {
     fetchPage,
     renderItem: (user) => UserCard(user),
     renderEmpty: () => EmptyState(emptyState),
+    renderLoading: createSkeletonLoader(UserSkeleton),
   });
   const unbind = bindFollowButtons(container);
   return () => {

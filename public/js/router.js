@@ -24,7 +24,16 @@ function isModifiedClick(event) {
  * History API router. Each route lazily imports a page module exporting
  * `render(container, context)`, which may return a cleanup function.
  */
-export function createRouter({ routes, outlet, notFoundPage, errorPage, onRouteChange }) {
+const SKELETON_DELAY_MS = 150;
+
+export function createRouter({
+  routes,
+  outlet,
+  notFoundPage,
+  errorPage,
+  onRouteChange,
+  renderLoading,
+}) {
   const compiledRoutes = routes.map((route) => ({ ...route, ...compilePattern(route.path) }));
   const scrollPositions = new Map();
   let cleanupCurrentPage = null;
@@ -103,7 +112,10 @@ export function createRouter({ routes, outlet, notFoundPage, errorPage, onRouteC
     outlet.setAttribute('aria-busy', 'true');
     onRouteChange?.(url.pathname);
 
+    // Only flash a skeleton for slow pages; fast ones swap in without flicker.
+    const skeletonTimer = setTimeout(() => renderLoading?.(outlet), SKELETON_DELAY_MS);
     const cleanup = await renderPage(matched?.route.page ?? notFoundPage, context);
+    clearTimeout(skeletonTimer);
     if (currentNavigation !== navigationId) return cleanup?.();
 
     cleanupCurrentPage = typeof cleanup === 'function' ? cleanup : null;

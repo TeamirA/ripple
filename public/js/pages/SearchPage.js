@@ -3,6 +3,7 @@ import { EmptyState } from '../components/EmptyState.js';
 import { bindFollowButtons } from '../components/FollowButton.js';
 import { icon } from '../components/icons.js';
 import { PageHeader } from '../components/PageHeader.js';
+import { UserSkeleton } from '../components/Skeleton.js';
 import { mountPostFeed } from '../components/PostFeed.js';
 import { Tabs } from '../components/Tabs.js';
 import { UserCard } from '../components/UserCard.js';
@@ -32,10 +33,7 @@ function SearchTabs(type, q) {
 }
 
 async function renderUserResults(container, q, signal) {
-  setHtml(
-    container,
-    html`<div class="list-status"><span class="spinner" aria-hidden="true"></span>Searching…</div>`,
-  );
+  setHtml(container, html`${UserSkeleton(3)}<span class="visually-hidden">Searching…</span>`);
   const { data } = await searchApi.users(q, { signal });
   setHtml(
     container,

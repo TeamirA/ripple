@@ -1,7 +1,7 @@
 import { html } from '../utils/escapeHtml.js';
-import { formatDateTime, formatRelativeTime } from '../utils/formatTime.js';
 import { Avatar } from './Avatar.js';
 import { icon } from './icons.js';
+import { RelativeTime } from './RelativeTime.js';
 
 const NOTIFICATION_COPY = {
   FOLLOW: { icon: 'userPlus', text: 'followed you' },
@@ -30,7 +30,6 @@ export function NotificationItem(notification) {
   return html`<a
     class="notification ${notification.isRead ? '' : 'is-unread'}"
     href="${getTargetUrl(notification)}"
-    role="listitem"
   >
     <span class="notification__icon notification__icon--${notification.type.toLowerCase()}"
       >${icon(iconName)}</span
@@ -39,11 +38,8 @@ export function NotificationItem(notification) {
       ${Avatar(notification.actor, 'sm')}
       <span class="notification__text">
         <strong>${notification.actor.displayName}</strong> ${text}
-        <time
-          class="notification__time"
-          datetime="${notification.createdAt}"
-          title="${formatDateTime(notification.createdAt)}"
-          >· ${formatRelativeTime(notification.createdAt)}</time
+        <span class="notification__time"
+          ><span aria-hidden="true">·</span> ${RelativeTime(notification.createdAt)}</span
         >
       </span>
       ${preview ? html`<span class="notification__preview">${preview}</span>` : ''}

@@ -50,6 +50,9 @@ export function createInfiniteList({
       <div data-status></div>
       <div class="infinite-list__sentinel" data-sentinel aria-hidden="true"></div>`,
   );
+  // role="list" requires listitem children; feeds hold <article> elements directly.
+  const renderListItem = (item) =>
+    role === 'list' ? html`<div role="listitem">${renderItem(item)}</div>` : renderItem(item);
   const items = container.querySelector('[data-items]');
   const status = container.querySelector('[data-status]');
   const sentinel = container.querySelector('[data-sentinel]');
@@ -68,7 +71,7 @@ export function createInfiniteList({
 
     try {
       const page = await fetchPage(cursor, controller.signal);
-      insertHtml(items, 'beforeend', html`${page.data.map(renderItem)}`);
+      insertHtml(items, 'beforeend', html`${page.data.map(renderListItem)}`);
       itemCount += page.data.length;
       cursor = page.nextCursor;
       isDone = !cursor;
@@ -101,7 +104,7 @@ export function createInfiniteList({
   return {
     /** Adds an item to the top, e.g. a post the user just published. */
     prepend(item) {
-      insertHtml(items, 'afterbegin', renderItem(item));
+      insertHtml(items, 'afterbegin', renderListItem(item));
       itemCount += 1;
       setHtml(status, html``);
     },

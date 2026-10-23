@@ -71,6 +71,13 @@ h3 {
   border-radius: var(--radius-sm);
 }
 
+/* Headings and <main> receive focus from the router so screen readers announce the
+   new page; they are not interactive, so no focus ring is drawn for them. */
+[tabindex='-1']:focus,
+[tabindex='-1']:focus-visible {
+  outline: none;
+}
+
 ::selection {
   background: var(--color-primary-soft);
 }

@@ -100,7 +100,7 @@ sequenceDiagram
   M->>C: req.user, req.params
   C->>S: likePost(userId, postId)
   S->>R: addPostLike(userId, postId)
-  R->>DB: BEGIN; INSERT ... ON CONFLICT DO NOTHING; UPDATE likesCount; COMMIT
+  R->>DB: transaction: INSERT ... ON CONFLICT DO NOTHING, then UPDATE likesCount
   S->>S: notify post author (first like only)
   C-->>B: 200 { likesCount, hasLiked: true }
 ```

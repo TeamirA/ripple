@@ -5,6 +5,6 @@ import { testDatabaseUrl } from './testDatabaseUrl.js';
 export default function setup() {
   execSync('npx prisma migrate deploy', {
     stdio: 'ignore',
-    env: { ...process.env, DATABASE_URL: testDatabaseUrl, DIRECT_DATABASE_URL: testDatabaseUrl },
+    env: { ...process.env, DATABASE_URL: testDatabaseUrl, DATABASE_URL_UNPOOLED: testDatabaseUrl },
   });
 }

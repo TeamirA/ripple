@@ -9,7 +9,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   // Neon: pooled URL for the app, direct URL for migrations.
-  directUrl = env("DIRECT_DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 enum NotificationType {

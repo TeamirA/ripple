@@ -11,7 +11,7 @@ export default defineConfig({
     env: {
       NODE_ENV: 'test',
       DATABASE_URL: testDatabaseUrl,
-      DIRECT_DATABASE_URL: testDatabaseUrl,
+      DATABASE_URL_UNPOOLED: testDatabaseUrl,
       JWT_SECRET: 'test-secret-that-is-definitely-long-enough-123',
       LOG_LEVEL: 'silent',
     },

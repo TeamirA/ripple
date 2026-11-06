@@ -12,6 +12,24 @@ A small, fast social network: share short posts, follow people, like and reply, 
 
 Feel free to post, like, comment and follow; the demo data is regenerated for fresh databases.
 
+## Contents
+
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [How to use Ripple](#how-to-use-ripple)
+- [Tech stack](#tech-stack)
+- [Architecture](#architecture)
+- [API reference](#api-reference)
+- [Using the API from the command line](#using-the-api-from-the-command-line)
+- [Local setup](#local-setup)
+- [Configuration](#configuration)
+- [Deployment](#deployment)
+- [Security](#security)
+- [Performance](#performance)
+- [Tech decisions and trade-offs](#tech-decisions-and-trade-offs)
+- [Troubleshooting](#troubleshooting)
+- [CI](#ci)
+
 ## Screenshots
 
 | Home feed (dark)                                                     | Profile (light)                                                   |
@@ -38,6 +56,104 @@ Feel free to post, like, comment and follow; the demo data is regenerated for fr
 - **Search:** people (ranked: exact username, prefix, trigram similarity, popularity) and posts (stemmed full-text search plus substring fallback), debounced as you type.
 - **Notifications:** follows, likes, comments and replies, with an unread badge and "mark all as read"; undoing a like or follow withdraws its notification.
 - **Polish:** light/dark/system theme, mobile-first layout, keyboard accessible, skeleton loaders, empty states, toasts, a clear error page and a 404 page.
+
+## How to use Ripple
+
+This section walks through the app as a user. Everything works the same on the [live demo](https://ripple-rho-seven.vercel.app) and on a [local copy](#local-setup).
+
+### 1. Get in
+
+- **Look around first:** signed-out visitors land on **Explore** and can read posts, profiles, comments and search results. Liking, commenting, posting and following ask you to sign in.
+- **Use the demo account:** on **Log in**, press **Try the demo account**. You are signed in as `@demo`, who already follows people and has notifications waiting.
+- **Create your own account:** go to **Sign up** and enter an email, a username, a display name and a password (see [Rules and limits](#rules-and-limits)).
+- **Log in later** with either your email or your username. Sessions last 7 days, even after you close the browser.
+
+### 2. Find people and follow them
+
+- On wide screens, the **Who to follow** panel in the right-hand column suggests friends of friends, ranked by how many people you have in common. On phones and tablets, use **Search** or browse **Explore** instead.
+- Open **Search**, type a name or username, and pick a person. Results update as you type.
+- On a profile, press **Follow**. The button switches to **Following**; press it again to unfollow.
+- Every profile has **Posts**, **Followers** and **Following** tabs, and each person in those lists has their own follow button.
+
+### 3. Read your feeds
+
+| Feed                   | Where                    | What it shows                                             |
+| ---------------------- | ------------------------ | --------------------------------------------------------- |
+| **Home**               | `/` (signed in)          | Your posts and posts from people you follow, newest first |
+| **Explore · Latest**   | `/explore`               | Every post on Ripple, newest first                        |
+| **Explore · Trending** | `/explore?sort=trending` | Posts from the last 48 hours with the most likes          |
+
+Feeds load more posts as you scroll. If a page of results fails to load, a **Retry** button appears instead of a blank list.
+
+### 4. Post
+
+1. On **Home**, write in the box at the top ("What’s rippling, …?"). The counter shows how many of the 500 characters are left.
+2. Optionally press the image button to attach a photo (JPEG, PNG, GIF or WebP, up to 4 MB). A preview appears and can be removed before posting. Image uploads need [Cloudinary](#configuration) to be configured.
+3. Press **Post**, or use <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Enter</kbd>.
+
+In any post or comment, `@username` links to that profile, `#hashtag` searches for the tag, and web addresses become links.
+
+To **edit** or **delete** one of your posts, use the **⋯** (Post options) menu on the post. Edited posts show an "edited" label; deleting asks for confirmation first.
+
+### 5. Like, comment and reply
+
+- Press the heart on a post or comment to like it; press again to unlike. The count updates instantly and rolls back if the request fails.
+- Open a post (click its text or the comment icon) to see the conversation. Write a comment in the box at the top of **Comments**.
+- Press **Reply** under a comment to answer it; the reply starts with `@their_username` and appears in that thread. Long threads show **View N more replies**.
+- In comment and reply boxes, <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Enter</kbd> sends and <kbd>Esc</kbd> cancels a reply.
+- You can delete your own comments. As the author of a post, you can also delete any comment on it. Deleting a comment also removes its replies.
+
+### 6. Notifications
+
+The bell in the navigation shows a badge with your unread count, refreshed every 30 seconds. **Notifications** lists who followed you, liked your posts or comments, commented on your posts and replied to your comments, each linking to the post or profile. Press **Mark all as read** to clear the badge. If someone unlikes or unfollows, the matching notification disappears.
+
+### 7. Make the profile yours
+
+On your profile, press **Edit profile** to change:
+
+- your display name (up to 50 characters) and bio (up to 160 characters)
+- your banner color
+- your photo (**Upload photo**, JPEG/PNG/GIF/WebP up to 2 MB, or **Remove** to go back to the generated initials avatar)
+
+### 8. Settings
+
+- **Appearance:** choose Light, Dark or System. The sun/moon button in the navigation switches quickly between light and dark. Your choice is remembered on this device.
+- **Change password:** enter your current and new password. Every other device you are signed in on is signed out; this one stays signed in.
+- **Account:** shows your username and email, and has **Log out**.
+
+### Rules and limits
+
+| Item          | Rule                                                                                         |
+| ------------- | -------------------------------------------------------------------------------------------- |
+| Username      | 3–30 characters: letters, numbers, `_` and `.` (no leading, trailing or double dots); unique |
+| Display name  | 1–50 characters                                                                              |
+| Password      | 8–72 characters                                                                              |
+| Bio           | Up to 160 characters                                                                         |
+| Post, comment | 1–500 characters                                                                             |
+| Post image    | JPEG, PNG, GIF or WebP, up to 4 MB                                                           |
+| Avatar        | JPEG, PNG, GIF or WebP, up to 2 MB                                                           |
+| Rate limits   | 20 sign-in/sign-up attempts per 15 minutes; 60 writes per minute                             |
+
+### Pages
+
+| URL                                  | Page                                          |
+| ------------------------------------ | --------------------------------------------- |
+| `/`                                  | Home feed (signed-out visitors go to Explore) |
+| `/explore`, `/explore?sort=trending` | Explore: latest or trending                   |
+| `/search?q=…`                        | People and post search                        |
+| `/p/:postId`                         | A post with its comments                      |
+| `/u/:username`                       | Profile (`/followers` and `/following` tabs)  |
+| `/notifications`                     | Notifications (signed in)                     |
+| `/settings`                          | Appearance, password and account (signed in)  |
+| `/login`, `/register`                | Log in and sign up                            |
+
+### Keyboard and accessibility
+
+- Everything is reachable with <kbd>Tab</kbd>; a **Skip to content** link comes first.
+- <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Enter</kbd> submits the post, comment or reply box you are typing in.
+- <kbd>Esc</kbd> closes dialogs and menus and cancels a reply.
+- After each page change, focus moves to the page heading so screen readers announce the new page; loading lists are marked busy.
+- Animations are turned off when the system asks for reduced motion.
 
 ## Tech stack
 
@@ -219,6 +335,19 @@ Example:
 curl -s "https://ripple-rho-seven.vercel.app/api/v1/feed/explore?sort=trending&limit=2"
 ```
 
+## Using the API from the command line
+
+The API uses the same cookies as the browser. With `curl`, keep them in a cookie jar, fetch a CSRF token once, and send it as `X-CSRF-Token` on every write:
+
+```bash
+BASE=https://ripple-rho-seven.vercel.app/api/v1
+CSRF=$(curl -s -c jar.txt "$BASE/auth/csrf" | sed -E 's/.*"csrfToken":"([^"]+)".*/\1/')
+curl -s -b jar.txt -c jar.txt -H "X-CSRF-Token: $CSRF" -X POST "$BASE/auth/demo"
+curl -s -b jar.txt "$BASE/feed/following?limit=3"
+```
+
+Write requests without a matching header are rejected with `403 FORBIDDEN`. Delete `jar.txt` when you are done.
+
 ## Local setup
 
 **Prerequisites:** Node.js 20+ and PostgreSQL 14+ (local, Docker or a free Neon database).
@@ -279,6 +408,23 @@ npm test
 
 The suite covers auth flows and session revocation, CSRF, validation and the error shape, ownership rules, counter consistency, idempotent and concurrent likes and follows, threading, notifications, cursor pagination without gaps or duplicates, search ranking, the trending window, upload validation (with Cloudinary mocked), static caching and the app shell.
 
+## Configuration
+
+All settings come from environment variables (`.env` locally, project settings on Vercel). The app validates them with zod at startup and refuses to start with a clear message if one is missing or invalid; Prisma reads the two database URLs.
+
+| Variable                                                               | Required | Default       | Purpose                                                                                                        |
+| ---------------------------------------------------------------------- | -------- | ------------- | -------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                                         | Yes      |               | PostgreSQL connection string (pooled on Neon)                                                                  |
+| `DATABASE_URL_UNPOOLED`                                                | Yes      |               | Direct connection for migrations; same as `DATABASE_URL` locally                                               |
+| `JWT_SECRET`                                                           | Yes      |               | Signs session tokens; at least 32 characters                                                                   |
+| `JWT_EXPIRES_IN_DAYS`                                                  | No       | `7`           | Session length                                                                                                 |
+| `NODE_ENV`                                                             | No       | `development` | `production` enables secure cookies, HSTS and CDN caching                                                      |
+| `PORT`                                                                 | No       | `3000`        | Local server port                                                                                              |
+| `LOG_LEVEL`                                                            | No       | `info`        | pino log level                                                                                                 |
+| `CORS_ORIGINS`                                                         | No       |               | Comma-separated extra origins allowed to call the API                                                          |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | No       |               | Enable avatar and post image uploads; without them, uploads return a clear error and initials avatars are used |
+| `DEMO_USERNAME`                                                        | No       | `demo`        | Account used by **Try the demo account**                                                                       |
+
 ## Deployment
 
 **Vercel + Neon** (what the live demo uses):
@@ -334,6 +480,17 @@ The container applies pending migrations on start and exposes a health check at 
 - **bcryptjs.** The same bcrypt algorithm without a native build step, which keeps serverless builds simple; it is slower than native bcrypt.
 - **Serverless trade-offs.** In-memory rate limits are per function instance, so the limits are approximate on Vercel; a shared store (Redis) would make them exact. The unread badge polls every 30 seconds instead of using WebSockets.
 - **One level of replies.** Keeps threads readable on mobile and queries simple; replying to a reply joins the parent thread with an `@mention`.
+
+## Troubleshooting
+
+| Symptom                                                         | Fix                                                                                                |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Server exits with `Invalid environment configuration`           | Check `.env` against [Configuration](#configuration); `JWT_SECRET` must be at least 32 characters. |
+| `Can't reach database server`                                   | Start PostgreSQL and check the host, port and database name in `DATABASE_URL`.                     |
+| **Try the demo account** says the demo account is not available | Run `npm run db:seed` to load the demo data.                                                       |
+| Uploading a photo fails with "Image uploads are not configured" | Add the three `CLOUDINARY_*` variables and restart.                                                |
+| Integration tests fail to connect                               | Create the test database with `createdb ripple_test`, or point `TEST_DATABASE_URL` at one.         |
+| `429 Too many requests`                                         | You hit a rate limit; wait for the window in [Rules and limits](#rules-and-limits) to pass.        |
 
 ## CI
 
